@@ -1,4 +1,4 @@
-# 🔥 Phoenix CTI Forge v2.0
+# 🔥 Phoenix CTI Forge v2.2
 
 **Cyber Threat Intelligence Educational Platform**  
 *Created by Australian Phoenix CyberOps*
@@ -32,12 +32,10 @@ analysts, by analysts with no external API calls and no data retention.
 
 ## Bugs Fixed (v2.0)
 
-1. **`config.py`** — `APP_NAME` was `"CTI Forge"`, renamed to `"Phoenix CTI Forge"`
-2. **`app.py`** — `inject_globals()` referenced `'Phoenix_APP_VERSION'` (typo); corrected to `'APP_VERSION'`
-3. **`ioc_engine.py`** — SHA256 hunt query had a stray `\t\t}` tab causing `IndentationError`
-4. **`ioc_engine.py`** — IPv4 Sigma hunt query used wrong key `sha256:` instead of `DestinationIp:`
-5. **`educational.py`** — True/False `correct_answer` was string `"True"`/`"False"` but JS submits `"A"`/`"B"`; corrected to letter format
-6. **`ioc_engine.py`** — IOC extraction now auto-refangs input first (handles defanged IOCs in intel reports)
+1. **`ioc_engine.py`** SHA256 hunt query had a stray `\t\t}` tab causing `IndentationError`
+2. **`ioc_engine.py`** IPv4 Sigma hunt query used wrong key `sha256:` instead of `DestinationIp:`
+3. **`educational.py`** True/False `correct_answer` was string `"True"`/`"False"` but JS submits `"A"`/`"B"`; corrected to letter format
+4. **`ioc_engine.py`** IOC extraction now auto-refangs input first (handles defanged IOCs in intel reports)
 
 ---
 
@@ -52,14 +50,6 @@ python app.py
 
 # 3. Open browser
 # http://127.0.0.1:5000
-```
-
-### Production (gunicorn)
-
-```bash
-export SECRET_KEY=$(python -c "import secrets; print(secrets.token_hex(32))")
-export FLASK_ENV=production
-gunicorn -w 4 -b 127.0.0.1:5000 app:app
 ```
 
 ---
