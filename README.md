@@ -3,6 +3,10 @@
 **Cyber Threat Intelligence Educational Platform**  
 *Created by Australian Phoenix CyberOps*
 
+
+https://github.com/user-attachments/assets/8a007ad1-618f-4fe1-8eda-9fdb8cdd2561
+
+
 ---
 
 ## Overview
@@ -18,7 +22,7 @@ analysts, by analysts with no external API calls and no data retention.
 | Module | Description |
 |---|---|
 | **IOC Analyzer** | Extracts 12 IOC types (IP, domain, URL, hashes, CVE, email, BTC, registry) from raw text with auto defang and hunt query generation |
-| **🆕 Defang / Re-fang Tool** | Bulk or single IOC defanging/re-fanging — the #1 daily CTI analyst task |
+| **Defang / Re-fang Tool** | Bulk or single IOC defanging/re-fanging — the #1 daily CTI analyst task |
 | **MITRE ATT&CK Explorer** | Browse all 14 tactics with curated techniques, CTI insights, APT examples, and detection tips |
 | **TTP Mapper** | Map natural-language behavior descriptions to ATT&CK techniques |
 | **Training Center** | 30+ interactive quiz questions across 6 categories with full explanations and learning paths |
