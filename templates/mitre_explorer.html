@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}MITRE ATT&CK Explorer - {{ app_name }}{% endblock %}
+{% block page_name %}mitre_explorer{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1>MITRE ATT&CK Explorer</h1>
+        <p>Explore tactics and techniques with CTI-focused educational content. Understand how adversaries operate and how to detect them.</p>
+    </div>
+</section>
+
+<section class="tool-section">
+    <div class="container">
+        <div class="search-bar">
+            <input type="text" id="mitre-search" class="search-input" placeholder="Search techniques, APT groups, or keywords...">
+            <button id="search-btn" class="btn btn-primary">Search</button>
+        </div>
+        
+        <div id="search-results" class="search-results hidden"></div>
+        
+        <h2>ATT&CK Tactics</h2>
+        <p class="section-desc">Select a tactic to view its techniques and CTI analysis insights.</p>
+        
+        <div class="tactics-grid">
+            {% for tactic in tactics %}
+            <div class="tactic-card" data-tactic-id="{{ tactic.id }}">
+                <div class="tactic-header">
+                    <span class="tactic-id">{{ tactic.id }}</span>
+                    <h3>{{ tactic.name }}</h3>
+                </div>
+                <p class="tactic-desc">{{ tactic.description }}</p>
+                <div class="tactic-footer">
+                    <span class="tech-count">{{ tactic.technique_count }} techniques</span>
+                    <button class="btn btn-small explore-tactic" data-tactic="{{ tactic.id }}">Explore</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div id="technique-panel" class="technique-panel hidden">
+            <div class="panel-header">
+                <h2 id="tactic-title"></h2>
+                <p id="tactic-pearl" class="ctipearl"></p>
+            </div>
+            <div id="technique-list" class="technique-list"></div>
+        </div>
+        
+        <div id="technique-detail" class="technique-detail hidden">
+            <button id="close-detail" class="btn btn-secondary">&larr; Back to Techniques</button>
+            <div id="detail-content"></div>
+        </div>
+    </div>
+</section>
+{% endblock %}

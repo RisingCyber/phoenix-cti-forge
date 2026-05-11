@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Report Builder - {{ app_name }}{% endblock %}
+{% block page_name %}report_builder{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1>Threat Report Builder</h1>
+        <p>Generate structured intelligence reports using professional CTI templates. Export as Markdown or structured JSON.</p>
+    </div>
+</section>
+
+<section class="tool-section">
+    <div class="container">
+        <div class="report-layout">
+            <aside class="report-sidebar">
+                <h3>Report Templates</h3>
+                <div class="template-list">
+                    <button class="template-btn active" data-template="incident_response">
+                        <strong>Incident Response</strong>
+                        <span>Document intrusions with timeline and TTPs</span>
+                    </button>
+                    <button class="template-btn" data-template="threat_actor_profile">
+                        <strong>Threat Actor Profile</strong>
+                        <span>Generate profiles from actor database</span>
+                    </button>
+                    <button class="template-btn" data-template="ioc_bulletin">
+                        <strong>IOC Bulletin</strong>
+                        <span>Structured indicator alert with actions</span>
+                    </button>
+                    <button class="template-btn" data-template="vulnerability_alert">
+                        <strong>Vulnerability Alert</strong>
+                        <span>CVE-based threat and remediation guide</span>
+                    </button>
+                </div>
+                
+                <h3>Threat Actors</h3>
+                <div class="actor-list">
+                    {% for actor in actors %}
+                    <div class="actor-item" data-actor="{{ actor.key }}">
+                        <span class="actor-name">{{ actor.name }}</span>
+                        <span class="actor-origin">{{ actor.origin }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </aside>
+            
+            <main class="report-main">
+                <div id="report-form-area">
+                    <h2 id="form-title">Incident Response Report</h2>
+                    
+                    <form id="report-form" class="report-form">
+                        <div id="dynamic-fields">
+                            <!-- Fields populated by JS based on template -->
+                        </div>
+                        <button type="submit" class="btn btn-primary">Generate Report</button>
+                    </form>
+                </div>
+                
+                <div id="report-output" class="report-output hidden">
+                    <div class="output-header">
+                        <h2>Generated Report</h2>
+                        <div class="output-actions">
+                            <button id="copy-md-btn" class="btn btn-secondary">Copy Markdown</button>
+                            <button id="new-report-btn" class="btn btn-secondary">New Report</button>
+                        </div>
+                    </div>
+                    <div id="report-content" class="report-content"></div>
+                </div>
+            </main>
+        </div>
+    </div>
+</section>
+{% endblock %}
