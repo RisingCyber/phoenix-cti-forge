@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Phoenix CTI Forge — Cyber Threat Intelligence Platform by Australian Phoenix CyberOps">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{% block title %}{{ app_name }}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body data-page="{% block page_name %}home{% endblock %}">
+    <div class="ambient-bg" aria-hidden="true">
+        <div class="ambient-orb orb-1"></div>
+        <div class="ambient-orb orb-2"></div>
+        <div class="ambient-orb orb-3"></div>
+    </div>
+
+    <header class="site-header" role="banner">
+        <div class="header-inner container">
+            <a class="site-logo" href="{{ url_for('index') }}" aria-label="{{ app_name }} home">
+                <img src="{{ url_for('static', filename='images/phoenix-logo.png') }}"
+                     alt="" class="logo-img logo-img--header" width="44" height="44" aria-hidden="true">
+                <span class="logo-text">
+                    <span class="logo-phoenix">Phoenix</span><span class="logo-cti"> CTI Forge</span>
+                </span>
+            </a>
+            <nav class="main-nav" aria-label="Main navigation">
+                <ul role="list">
+                    <li><a href="{{ url_for('index') }}" class="nav-link {% if request.endpoint=='index' %}nav-link--active{% endif %}"><span class="nav-icon">⌂</span>Home</a></li>
+                    <li><a href="{{ url_for('ioc_analyzer_page') }}" class="nav-link {% if request.endpoint=='ioc_analyzer_page' %}nav-link--active{% endif %}"><span class="nav-icon">⚲</span>IOC Analyzer</a></li>
+                    <li><a href="{{ url_for('defang_tool_page') }}" class="nav-link {% if request.endpoint=='defang_tool_page' %}nav-link--active{% endif %}"><span class="nav-icon">⚙</span>Defang</a></li>
+                    <li><a href="{{ url_for('toolkit_page') }}" class="nav-link nav-link--highlight {% if request.endpoint=='toolkit_page' %}nav-link--active{% endif %}"><span class="nav-icon">◈</span>CTI Toolkit</a></li>
+                    <li><a href="{{ url_for('mitre_explorer_page') }}" class="nav-link {% if request.endpoint=='mitre_explorer_page' %}nav-link--active{% endif %}"><span class="nav-icon">◫</span>MITRE</a></li>
+                    <li><a href="{{ url_for('ttp_mapper_page') }}" class="nav-link {% if request.endpoint=='ttp_mapper_page' %}nav-link--active{% endif %}"><span class="nav-icon">⊞</span>TTP Mapper</a></li>
+                    <li><a href="{{ url_for('training_page') }}" class="nav-link {% if request.endpoint=='training_page' %}nav-link--active{% endif %}"><span class="nav-icon">✦</span>Training</a></li>
+                    <li><a href="{{ url_for('report_builder_page') }}" class="nav-link {% if request.endpoint=='report_builder_page' %}nav-link--active{% endif %}"><span class="nav-icon">▤</span>Reports</a></li>
+                </ul>
+            </nav>
+            <div class="header-meta">
+                <span class="version-badge">v{{ app_version }}</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content" id="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-inner container">
+            <div class="footer-brand">
+                <img src="{{ url_for('static', filename='images/phoenix-logo.png') }}"
+                     alt="" class="logo-img logo-img--footer" width="30" height="30" aria-hidden="true">
+                <div class="footer-brand-text">
+                    <strong>{{ app_name }}</strong><span>v{{ app_version }}</span>
+                </div>
+            </div>
+            <div class="footer-center">
+                <span class="footer-credit">Created by <strong>Australian Phoenix CyberOps</strong></span>
+                <span class="footer-divider">·</span>
+                <span class="footer-notice">Educational use only</span>
+                <span class="footer-divider">·</span>
+                <span class="footer-notice">No external data transmission</span>
+            </div>
+            <div class="footer-right">
+                <span class="tlp-badge tlp-clear">TLP:CLEAR</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

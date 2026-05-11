@@ -1,0 +1,449 @@
+{% extends "base.html" %}
+{% block title %}CTI Toolkit - {{ app_name }}{% endblock %}
+{% block page_name %}toolkit{% endblock %}
+
+{% block content %}
+<section class="page-header">
+  <div class="container">
+    <h1>◈ CTI Toolkit - CyberChef for CTI</h1>
+    <p>All-in-one analysis toolkit for threat intelligence analysts. Encode, decode, convert, hunt, and analyse entirely in your browser with no external calls.</p>
+  </div>
+</section>
+
+<section class="tool-section">
+<div class="container">
+<div class="toolkit-layout">
+
+  <!-- ── Side nav ─────────────────────────────────────────────────── -->
+  <nav class="toolkit-nav" aria-label="Toolkit tools">
+    <button class="toolkit-nav-btn active" data-tool="base64"><span class="toolkit-nav-icon">⬡</span>Base64 Codec</button>
+    <button class="toolkit-nav-btn" data-tool="hex"><span class="toolkit-nav-icon">⬢</span>Hex Codec</button>
+    <button class="toolkit-nav-btn" data-tool="url"><span class="toolkit-nav-icon">⬡</span>URL Codec</button>
+    <button class="toolkit-nav-btn" data-tool="entropy"><span class="toolkit-nav-icon">◉</span>String Entropy</button>
+    <button class="toolkit-nav-btn" data-tool="hashid"><span class="toolkit-nav-icon">⬡</span>Hash Identifier</button>
+    <button class="toolkit-nav-btn" data-tool="timestamp"><span class="toolkit-nav-icon">◷</span>Timestamp Converter</button>
+    <button class="toolkit-nav-btn" data-tool="iptools"><span class="toolkit-nav-icon">◎</span>IP / CIDR Tools</button>
+    <button class="toolkit-nav-btn" data-tool="iocdedup"><span class="toolkit-nav-icon">⬡</span>IOC Deduplicator</button>
+    <button class="toolkit-nav-btn" data-tool="tlpstamp"><span class="toolkit-nav-icon">◈</span>TLP Stamper</button>
+    <button class="toolkit-nav-btn" data-tool="huntbuilder"><span class="toolkit-nav-icon">⬡</span>Hunt Query Builder</button>
+    <button class="toolkit-nav-btn" data-tool="yara"><span class="toolkit-nav-icon">◈</span>YARA Generator</button>
+    <button class="toolkit-nav-btn" data-tool="sigma"><span class="toolkit-nav-icon">⬡</span>Sigma Rule Generator</button>
+  </nav>
+
+  <!-- ── Tool panels ───────────────────────────────────────────────── -->
+  <div class="toolkit-panels">
+
+    <!-- Base64 -->
+    <div class="toolkit-panel active" id="tool-base64">
+      <h2>⬡ Base64 Codec</h2>
+      <p class="tool-desc">Encode or decode Base64 strings. Supports standard Base64 and URL-safe Base64. Commonly used by threat actors for obfuscating payloads and C2 commands.</p>
+      <div class="form-group">
+        <label class="form-label">Input</label>
+        <textarea class="form-textarea bulk-textarea" id="b64-input" rows="6" placeholder="Paste text or Base64 string here..."></textarea>
+      </div>
+      <div class="flex-row mb-4">
+        <button class="btn btn-primary btn-sm" id="b64-encode-btn">Encode → Base64</button>
+        <button class="btn btn-secondary btn-sm" id="b64-decode-btn">Decode ← Base64</button>
+        <button class="btn btn-ghost btn-sm" id="b64-copy-btn">Copy Output</button>
+        <button class="btn btn-ghost btn-sm" id="b64-clear-btn">Clear</button>
+      </div>
+      <label class="form-label">Output</label>
+      <div class="code-block" id="b64-output" style="min-height:80px;white-space:pre-wrap;word-break:break-all;">Result will appear here…</div>
+      <div class="alert alert-info mt-4">
+        <strong>CTI Use:</strong> Attackers frequently encode PowerShell commands with Base64 to bypass basic string detection. The <code>-EncodedCommand</code> PowerShell flag accepts Base64 UTF-16LE encoded strings. Always decode and analyse suspicious encoded strings before dismissing them.
+      </div>
+    </div>
+
+    <!-- Hex Codec -->
+    <div class="toolkit-panel" id="tool-hex">
+      <h2>⬢ Hex Codec</h2>
+      <p class="tool-desc">Convert between hexadecimal and ASCII/UTF-8 text. Essential for analysing shellcode, binary payloads, and encoded strings in malware analysis.</p>
+      <div class="form-group">
+        <label class="form-label">Input</label>
+        <textarea class="form-textarea bulk-textarea" id="hex-input" rows="5" placeholder="Paste text or hex string (e.g. 48656c6c6f)..."></textarea>
+      </div>
+      <div class="flex-row mb-4">
+        <button class="btn btn-primary btn-sm" id="hex-encode-btn">Text → Hex</button>
+        <button class="btn btn-secondary btn-sm" id="hex-decode-btn">Hex → Text</button>
+        <button class="btn btn-ghost btn-sm" id="hex-bytes-btn">Hex → Bytes View</button>
+        <button class="btn btn-ghost btn-sm" id="hex-copy-btn">Copy</button>
+      </div>
+      <label class="form-label">Output</label>
+      <div class="code-block" id="hex-output" style="min-height:80px;white-space:pre-wrap;word-break:break-all;">Result will appear here…</div>
+      <div class="alert alert-info mt-4">
+        <strong>CTI Use:</strong> Hex encoding is common in shellcode blobs, XOR keys, and malware configuration extraction. Look for repeating hex patterns that suggest XOR encryption keys.
+      </div>
+    </div>
+
+    <!-- URL Codec -->
+    <div class="toolkit-panel" id="tool-url">
+      <h2>⬡ URL / Percent Codec</h2>
+      <p class="tool-desc">Encode or decode URL percent-encoding. Threat actors use URL encoding to bypass WAF signatures and obfuscate parameters in exploit payloads.</p>
+      <div class="form-group">
+        <label class="form-label">Input</label>
+        <textarea class="form-textarea bulk-textarea" id="url-input" rows="5" placeholder="Paste URL or percent-encoded string..."></textarea>
+      </div>
+      <div class="flex-row mb-4">
+        <button class="btn btn-primary btn-sm" id="url-encode-btn">Encode</button>
+        <button class="btn btn-secondary btn-sm" id="url-decode-btn">Decode</button>
+        <button class="btn btn-ghost btn-sm" id="url-full-encode-btn">Full Encode (all chars)</button>
+        <button class="btn btn-ghost btn-sm" id="url-copy-btn">Copy</button>
+      </div>
+      <label class="form-label">Output</label>
+      <div class="code-block" id="url-output" style="min-height:80px;white-space:pre-wrap;word-break:break-all;">Result will appear here…</div>
+      <div class="alert alert-warning mt-4">
+        #<strong>CTI Use:</strong> Log4Shell (CVE-2021-44228) payloads used nested URL encoding (<code>%24%7B...</code>) and JNDI protocol variations to bypass WAF detection. Always recursively decode until the string is fully resolved.
+      </div>
+    </div>
+
+    <!-- String Entropy -->
+    <div class="toolkit-panel" id="tool-entropy">
+      <h2>◉ String Entropy Calculator</h2>
+      <p class="tool-desc">Calculate Shannon entropy of strings or text. High entropy (> 4.5 bits/char) often indicates encryption, compression, or Base64 encoding — common in packed malware and obfuscated configs.</p>
+      <div class="form-group">
+        <label class="form-label">Input String or File Content</label>
+        <textarea class="form-textarea bulk-textarea" id="entropy-input" rows="7" placeholder="Paste string or file content to analyse..."></textarea>
+      </div>
+      <button class="btn btn-primary btn-sm mb-4" id="entropy-calc-btn">Calculate Entropy</button>
+      <div id="entropy-result" class="hidden">
+        <div class="card mt-4">
+          <div class="flex-between mb-4">
+            <h3 style="font-size:1rem">Entropy Results</h3>
+            <span id="entropy-verdict" class="badge"></span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px">
+            <div class="stat-item"><span class="stat-number" id="entropy-score" style="font-size:1.6rem">-</span><span class="stat-label">Shannon Entropy (bits/char)</span></div>
+            <div class="stat-item"><span class="stat-number" id="entropy-len" style="font-size:1.6rem">-</span><span class="stat-label">Length (chars)</span></div>
+            <div class="stat-item"><span class="stat-number" id="entropy-unique" style="font-size:1.6rem">-</span><span class="stat-label">Unique Characters</span></div>
+          </div>
+          <div class="progress-bar" style="height:8px;border-radius:4px;margin-bottom:8px"><div class="progress-fill" id="entropy-bar" style="width:0%"></div></div>
+          <div id="entropy-explanation" class="alert alert-info" style="margin-top:12px"></div>
+        </div>
+      </div>
+      <div class="card mt-4">
+        <h3 style="font-size:0.9rem;margin-bottom:12px">Entropy Reference</h3>
+        <table class="data-table">
+          <thead><tr><th>Range</th><th>Meaning</th><th>Examples</th></tr></thead>
+          <tbody>
+            <tr><td><span class="text-green">0 – 3.5</span></td><td>Low — natural language</td><td>English text, log files</td></tr>
+            <tr><td><span class="text-amber">3.5 – 4.5</span></td><td>Medium — mixed content</td><td>Code, URLs, passwords</td></tr>
+            <tr><td><span class="text-amber">4.5 – 5.5</span></td><td>High — possible encoding</td><td>Base64, hex strings</td></tr>
+            <tr><td><span class="text-red">5.5 – 8.0</span></td><td>Very High — encrypted/packed</td><td>Malware configs, ciphertext, packed PE</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Hash Identifier -->
+    <div class="toolkit-panel" id="tool-hashid">
+      <h2>⬡ Hash Identifier</h2>
+      <p class="tool-desc">Identify hash type by length and character set. Paste one hash per line or a mixed list and get type classifications with CTI context.</p>
+      <div class="form-group">
+        <label class="form-label">Hash Values (one per line)</label>
+        <textarea class="form-textarea bulk-textarea" id="hashid-input" rows="8" placeholder="Paste hashes here — one per line…"></textarea>
+      </div>
+      <button class="btn btn-primary btn-sm mb-4" id="hashid-btn">Identify Hashes</button>
+      <div id="hashid-results" class="hidden">
+        <table class="data-table" id="hashid-table">
+          <thead><tr><th>Hash (truncated)</th><th>Type</th><th>Length</th><th>CTI Notes</th></tr></thead>
+          <tbody id="hashid-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Timestamp -->
+    <div class="toolkit-panel" id="tool-timestamp">
+      <h2>◷ Timestamp Converter</h2>
+      <p class="tool-desc">Convert between timestamp formats used in logs, malware, and forensic artefacts. Supports Unix epoch, ISO 8601, Windows FILETIME, and more.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="form-group">
+          <label class="form-label">Unix Epoch (seconds)</label>
+          <input type="text" class="form-input ts-input" id="ts-epoch" placeholder="e.g. 1700000000">
+        </div>
+        <div class="form-group">
+          <label class="form-label">ISO 8601 / UTC</label>
+          <input type="text" class="form-input ts-input" id="ts-iso" placeholder="e.g. 2023-11-14T22:13:20Z">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Windows FILETIME (100ns ticks since 1601)</label>
+          <input type="text" class="form-input ts-input" id="ts-filetime" placeholder="e.g. 133453528000000000">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Epoch Milliseconds</label>
+          <input type="text" class="form-input ts-input" id="ts-epoch-ms" placeholder="e.g. 1700000000000">
+        </div>
+      </div>
+      <div class="flex-row mb-4">
+        <button class="btn btn-primary btn-sm" id="ts-convert-btn">Convert All</button>
+        <button class="btn btn-secondary btn-sm" id="ts-now-btn">Use Current Time</button>
+        <button class="btn btn-ghost btn-sm" id="ts-clear-btn">Clear</button>
+      </div>
+      <div id="ts-results" class="hidden">
+        <div class="card">
+          <div id="ts-table-body"></div>
+        </div>
+      </div>
+      <div class="alert alert-info mt-4">
+        <strong>CTI Use:</strong> Windows FILETIME is used in registry LastWrite times, $MFT timestamps, and Prefetch files. Epoch timestamps appear in JWT tokens, malware configs, and C2 beacons. Always convert to UTC for cross-timezone correlation.
+      </div>
+    </div>
+
+    <!-- IP / CIDR Tools -->
+    <div class="toolkit-panel" id="tool-iptools">
+      <h2>◎ IP / CIDR Tools</h2>
+      <p class="tool-desc">Analyse IP addresses and CIDR ranges. Check if IPs are private/public, classify address space, expand CIDR ranges, and identify special-use blocks.</p>
+      <div class="form-group">
+        <label class="form-label">IP Address or CIDR Range</label>
+        <input type="text" class="form-input" id="ip-input" placeholder="e.g. 192.168.1.0/24 or 10.0.0.1">
+      </div>
+      <div class="flex-row mb-4">
+        <button class="btn btn-primary btn-sm" id="ip-analyse-btn">Analyse</button>
+        <button class="btn btn-secondary btn-sm" id="ip-defang-btn">Defang IP</button>
+        <button class="btn btn-ghost btn-sm" id="ip-clear-btn">Clear</button>
+      </div>
+      <div id="ip-results" class="hidden">
+        <div class="card" id="ip-result-card"></div>
+      </div>
+      <div class="mt-4">
+        <h3 style="font-size:0.9rem;margin-bottom:10px">Quick CIDR Membership Check</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end">
+          <div><label class="form-label">IP Address</label><input type="text" class="form-input" id="cidr-ip" placeholder="e.g. 10.0.0.1"></div>
+          <div><label class="form-label">CIDR Range</label><input type="text" class="form-input" id="cidr-range" placeholder="e.g. 10.0.0.0/8"></div>
+          <button class="btn btn-cyan btn-sm" id="cidr-check-btn">Check</button>
+        </div>
+        <div id="cidr-result" class="alert mt-4 hidden"></div>
+      </div>
+    </div>
+
+    <!-- IOC Deduplicator -->
+    <div class="toolkit-panel" id="tool-iocdedup">
+      <h2>⬡ IOC Deduplicator & Sorter</h2>
+      <p class="tool-desc">Paste IOC lists from multiple sources. Remove duplicates, sort, count occurrences, and export a clean deduplicated list. Essential before loading IOCs into a SIEM or TIP.</p>
+      <div class="two-panel" style="margin-bottom:14px">
+        <div class="panel">
+          <div class="panel-header"><h2>Input (paste multiple lists)</h2><button class="btn btn-ghost btn-sm" id="dedup-clear-in">Clear</button></div>
+          <textarea class="bulk-textarea" id="dedup-input" placeholder="Paste IOC lists here — one per line. Duplicates OK.&#10;&#10;203.0.113.47&#10;evil.com&#10;203.0.113.47&#10;malware.net&#10;evil.com"></textarea>
+          <div class="char-count" id="dedup-count-in">0 entries</div>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><h2>Deduplicated Output</h2><button class="btn btn-ghost btn-sm" id="dedup-copy-out">Copy</button></div>
+          <div class="bulk-output" id="dedup-output"><div class="output-placeholder"><span class="output-placeholder-icon">⬡</span><p>Click Deduplicate to process</p></div></div>
+          <div class="char-count" id="dedup-count-out">0 unique entries</div>
+        </div>
+      </div>
+      <div class="flex-row mb-4">
+        <button class="btn btn-primary" id="dedup-btn">Deduplicate & Sort</button>
+        <label class="form-label" style="margin:0;display:flex;align-items:center;gap:6px;font-weight:400;cursor:pointer">
+          <input type="checkbox" id="dedup-lowercase"> Lowercase all
+        </label>
+        <label class="form-label" style="margin:0;display:flex;align-items:center;gap:6px;font-weight:400;cursor:pointer">
+          <input type="checkbox" id="dedup-strip-quotes"> Strip quotes
+        </label>
+        <label class="form-label" style="margin:0;display:flex;align-items:center;gap:6px;font-weight:400;cursor:pointer">
+          <input type="checkbox" id="dedup-ignore-blank" checked> Remove blank lines
+        </label>
+      </div>
+      <div id="dedup-stats" class="hidden">
+        <div class="flex-row" style="gap:20px;flex-wrap:wrap">
+          <span class="badge badge-amber" id="dedup-stat-total"></span>
+          <span class="badge badge-green" id="dedup-stat-unique"></span>
+          <span class="badge badge-cyan" id="dedup-stat-removed"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TLP Stamper -->
+    <div class="toolkit-panel" id="tool-tlpstamp">
+      <h2>◈ TLP Stamper</h2>
+      <p class="tool-desc">Add a Traffic Light Protocol header and footer to threat intel text for correct classification. Ensures your reports are labelled for appropriate distribution.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+        <div class="form-group">
+          <label class="form-label">TLP Classification</label>
+          <select class="form-select" id="tlp-select">
+            <option value="CLEAR">TLP:CLEAR — No restrictions, public</option>
+            <option value="GREEN">TLP:GREEN — Community sharing</option>
+            <option value="AMBER" selected>TLP:AMBER — Organisation + direct partners</option>
+            <option value="AMBER+STRICT">TLP:AMBER+STRICT — Organisation only</option>
+            <option value="RED">TLP:RED — Named recipients only</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Source / Author (optional)</label>
+          <input type="text" class="form-input" id="tlp-source" placeholder="e.g. Australian Phoenix CyberOps">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Report / Intelligence Text</label>
+        <textarea class="form-textarea bulk-textarea" id="tlp-input" rows="8" placeholder="Paste your threat intelligence report text here..."></textarea>
+      </div>
+      <div class="flex-row mb-4">
+        <button class="btn btn-primary" id="tlp-stamp-btn">Stamp with TLP</button>
+        <button class="btn btn-ghost btn-sm" id="tlp-copy-btn">Copy Stamped</button>
+        <button class="btn btn-ghost btn-sm" id="tlp-clear-btn">Clear</button>
+      </div>
+      <div id="tlp-output-wrap" class="hidden">
+        <label class="form-label">Stamped Output</label>
+        <div class="code-block" id="tlp-output" style="min-height:200px;white-space:pre-wrap"></div>
+      </div>
+      <div class="card mt-4">
+        <h3 style="font-size:0.9rem;margin-bottom:12px">TLP Reference (FIRST TLP 2.0)</h3>
+        <table class="data-table">
+          <thead><tr><th>Label</th><th>Share With</th><th>Use Case</th></tr></thead>
+          <tbody>
+            <tr><td><span class="tlp-badge tlp-clear">TLP:CLEAR</span></td><td>Anyone, publicly</td><td>Published advisories, public IOC feeds</td></tr>
+            <tr><td><span class="tlp-badge tlp-green">TLP:GREEN</span></td><td>Community / sector</td><td>ISAC sharing, sector-specific intel</td></tr>
+            <tr><td><span class="tlp-badge tlp-amber">TLP:AMBER</span></td><td>Organisation + direct partners</td><td>Incident response intel, vendor sharing</td></tr>
+            <tr><td><span class="tlp-badge tlp-amber">TLP:AMBER+STRICT</span></td><td>Organisation only</td><td>Internal IR reports, sensitive campaigns</td></tr>
+            <tr><td><span class="tlp-badge tlp-red">TLP:RED</span></td><td>Named recipients only</td><td>Active intelligence, victim data</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Hunt Query Builder -->
+    <div class="toolkit-panel" id="tool-huntbuilder">
+      <h2>⬡ Hunt Query Builder</h2>
+      <p class="tool-desc">Build detection and hunting queries from IOC lists for Splunk SPL, Microsoft KQL (Sentinel/Defender), Elastic EQL, Sigma YAML, and YARA. Paste your IOCs and select the platform.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="form-group">
+          <label class="form-label">IOC Type</label>
+          <select class="form-select" id="hb-type">
+            <option value="ip">IPv4 Addresses</option>
+            <option value="domain">Domains</option>
+            <option value="sha256">SHA256 Hashes</option>
+            <option value="md5">MD5 Hashes</option>
+            <option value="url">URLs</option>
+            <option value="email">Email Addresses</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Detection Context</label>
+          <select class="form-select" id="hb-context">
+            <option value="network">Network / Firewall</option>
+            <option value="endpoint">Endpoint / EDR</option>
+            <option value="dns">DNS</option>
+            <option value="email">Email Gateway</option>
+            <option value="proxy">Web Proxy</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">IOC Values (one per line, max 50)</label>
+        <textarea class="form-textarea bulk-textarea" id="hb-iocs" rows="5" placeholder="Paste IOCs here — one per line"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Rule / Query Name</label>
+        <input type="text" class="form-input" id="hb-rulename" placeholder="e.g. PhoenixCTI_APT_Campaign_Nov2025">
+      </div>
+      <button class="btn btn-primary mb-4" id="hb-generate-btn">Generate Queries</button>
+      <div id="hb-output" class="hidden">
+        <div class="hunt-output-tabs" id="hb-tabs"></div>
+        <div id="hb-contents"></div>
+      </div>
+    </div>
+
+    <!-- YARA Generator -->
+    <div class="toolkit-panel" id="tool-yara">
+      <h2>◈ YARA Rule Generator</h2>
+      <p class="tool-desc">Generate YARA rules from file hashes, string indicators, and hex patterns. Output is valid YARA 4.x syntax ready for deployment.</p>
+      <div class="form-group">
+        <label class="form-label">Rule Name</label>
+        <input type="text" class="form-input" id="yara-name" placeholder="e.g. PhoenixCTI_Ransomware_Nov2025">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Author / Reference</label>
+        <input type="text" class="form-input" id="yara-author" placeholder="Australian Phoenix CyberOps">
+      </div>
+      <div class="form-group">
+        <label class="form-label">File Hashes (one per line — MD5, SHA1, or SHA256)</label>
+        <textarea class="form-textarea" id="yara-hashes" rows="4" placeholder="Paste file hashes here — one per line"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">String Indicators (one per line)</label>
+        <textarea class="form-textarea" id="yara-strings" rows="4" placeholder="e.g. suspicious registry paths, ransom note strings, mutex names..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Hex Patterns (optional, one per line, e.g. 4D 5A 90 00)</label>
+        <textarea class="form-textarea" id="yara-hex" rows="3" placeholder="e.g. 4D 5A 90 00 03 00 00 00"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">TLP Classification</label>
+        <select class="form-select" id="yara-tlp">
+          <option value="TLP:CLEAR">TLP:CLEAR</option>
+          <option value="TLP:GREEN">TLP:GREEN</option>
+          <option value="TLP:AMBER" selected>TLP:AMBER</option>
+          <option value="TLP:RED">TLP:RED</option>
+        </select>
+      </div>
+      <button class="btn btn-primary mb-4" id="yara-generate-btn">Generate YARA Rule</button>
+      <div id="yara-output" class="hidden">
+        <div class="flex-between mb-4">
+          <label class="form-label" style="margin:0">Generated YARA Rule</label>
+          <button class="btn btn-ghost btn-sm" id="yara-copy-btn">Copy Rule</button>
+        </div>
+        <div class="code-block" id="yara-code" style="white-space:pre;overflow-x:auto;max-height:450px;overflow-y:auto"></div>
+      </div>
+    </div>
+
+    <!-- Sigma Generator -->
+    <div class="toolkit-panel" id="tool-sigma">
+      <h2>⬡ Sigma Rule Generator</h2>
+      <p class="tool-desc">Generate Sigma detection rules from IOCs and behavioural indicators. Sigma rules are portable — convert to Splunk SPL, KQL, Elastic, or QRadar using sigma-cli.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="form-group">
+          <label class="form-label">Rule Title</label>
+          <input type="text" class="form-input" id="sig-title" placeholder="e.g. Suspicious C2 Communication">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Log Source Category</label>
+          <select class="form-select" id="sig-category">
+            <option value="network_connection">Network Connection</option>
+            <option value="dns_query">DNS Query</option>
+            <option value="process_creation">Process Creation</option>
+            <option value="file_event">File Event</option>
+            <option value="registry_event">Registry Event</option>
+            <option value="webserver">Web Server</option>
+            <option value="firewall">Firewall</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Severity Level</label>
+          <select class="form-select" id="sig-level">
+            <option value="informational">Informational</option>
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+            <option value="critical">Critical</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">MITRE ATT&CK Technique ID</label>
+          <input type="text" class="form-input" id="sig-attack" placeholder="e.g. T1071.001">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Detection Values (one per line — IPs, domains, hashes, process names, etc.)</label>
+        <textarea class="form-textarea bulk-textarea" id="sig-values" rows="5" placeholder="Paste indicators here — one per line"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <input type="text" class="form-input" id="sig-desc" placeholder="e.g. Detects C2 communication with known threat actor infrastructure">
+      </div>
+      <button class="btn btn-primary mb-4" id="sig-generate-btn">Generate Sigma Rule</button>
+      <div id="sig-output" class="hidden">
+        <div class="flex-between mb-4">
+          <label class="form-label" style="margin:0">Sigma Rule (YAML)</label>
+          <button class="btn btn-ghost btn-sm" id="sig-copy-btn">Copy Rule</button>
+        </div>
+        <div class="code-block" id="sig-code" style="white-space:pre;overflow-x:auto;max-height:450px;overflow-y:auto"></div>
+        <div class="alert alert-info mt-4">
+          <strong>Convert to SIEM queries:</strong> Use <code>sigma-cli convert -t splunk rule.yml</code> or the Sigma HQ converter at sigma.socprime.com to convert this rule to your SIEM's query language.
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /toolkit-panels -->
+</div><!-- /toolkit-layout -->
+</div>
+</section>
+{% endblock %}
