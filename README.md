@@ -27,7 +27,7 @@ analysts, by analysts with no external API calls and no data retention.
 
 ---
 
-## Bugs Fixed (v2.0)
+## Bugs Fixed (v2.3)
 
 1. **`ioc_engine.py`** SHA256 hunt query had a stray `\t\t}` tab causing `IndentationError`
 2. **`ioc_engine.py`** IPv4 Sigma hunt query used wrong key `sha256:` instead of `DestinationIp:`
