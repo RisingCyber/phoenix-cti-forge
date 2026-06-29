@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %}Hunt Import — {{ app_name }}{% endblock %}
+{% block page_name %}hunt-import{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <div class="container">
+    <h1>&#127919; Hunt Import</h1>
+    <p>Import a <code>CTI-ATTACKCollector</code> report &mdash; triage every ATT&amp;CK technique attributed to a threat actor, map to your telemetry, and export annotated results to detection engineering.</p>
+  </div>
+</div>
+
+<div class="tool-section">
+  <div class="container">
+
+    <!-- ── Import Panel ───────────────────────────────────────────────── -->
+    <div id="importPanel">
+      <div class="card card--glow" style="max-width:860px;margin:0 auto;">
+        <div class="card-header">
+          <h2>&#128229; Load Report</h2>
+          <span class="badge badge-amber">Step 1 of 2</span>
+        </div>
+
+        <!-- Hidden file input — sits OUTSIDE the drop zone -->
+        <input type="file" id="fileInput" accept=".json,application/json" style="display:none">
+
+        <!-- Drop zone — no inline handlers -->
+        <div id="dropZone"
+             tabindex="0"
+             role="button"
+             aria-label="Drop zone — click or drag a JSON report file here"
+             style="border:2px dashed var(--border-accent);border-radius:var(--r-lg);padding:40px 24px;text-align:center;cursor:pointer;transition:background var(--t-fast),border-color var(--t-fast);margin-bottom:20px;">
+          <div style="font-size:2.2rem;margin-bottom:10px;">&#128193;</div>
+          <p style="color:var(--amber-400);font-weight:600;margin-bottom:6px;">Drop <code>cti_report.json</code> here</p>
+          <p style="color:var(--text-muted);font-size:0.83rem;">or click to browse &middot; max 5 MB &middot; JSON only</p>
+        </div>
+
+        <!-- Paste fallback — no inline handlers -->
+        <div style="margin-bottom:18px;">
+          <label for="jsonPaste" style="display:block;font-size:0.8rem;color:var(--text-muted);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;">Or paste JSON directly</label>
+          <textarea id="jsonPaste"
+                    style="width:100%;background:var(--bg-code);color:var(--text-code);border:1px solid var(--border);border-radius:var(--r-md);padding:12px 14px;font-family:monospace;font-size:0.8rem;line-height:1.5;resize:vertical;min-height:120px;outline:none;transition:border-color var(--t-fast);"
+                    placeholder='{ "report_meta": { "actor_name": "APT29", ... }, "techniques": [ ... ] }'></textarea>
+        </div>
+
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <button id="btnParse" class="btn btn-primary">&#9889; Parse Report</button>
+          <button id="btnClear" class="btn btn-ghost btn-sm">&#128465; Clear</button>
+          <a href="https://github.com/RisingCyber/phoenix-cti-forge" target="_blank" rel="noopener noreferrer"
+             class="btn btn-ghost btn-sm" style="margin-left:auto;">
+            &#128196; Get CTI-ATTACKCollector &#8599;
+          </a>
+        </div>
+
+        <div id="importStatus" style="display:none;margin-top:16px;"></div>
+      </div>
+    </div>
+
+    <!-- ── Triage Panel ───────────────────────────────────────────────── -->
+    <div id="triagePanel" style="display:none;">
+
+      <!-- Summary bar -->
+      <div class="card" style="margin-bottom:20px;padding:16px 22px;">
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+          <span style="font-size:1.8rem;">&#128293;</span>
+          <div style="flex:1;min-width:180px;">
+            <div id="actorTitle" style="font-size:1.1rem;font-weight:700;color:var(--amber-400);">—</div>
+            <div id="actorAliases" style="font-size:0.8rem;color:var(--text-muted);"></div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <span id="techCount" class="badge badge-amber" style="font-size:0.82rem;padding:4px 12px;"></span>
+            <span id="reportMeta" style="font-size:0.78rem;color:var(--text-muted);"></span>
+          </div>
+        </div>
+        <div style="margin-top:14px;">
+          <div style="display:flex;justify-content:space-between;font-size:0.78rem;color:var(--text-muted);margin-bottom:6px;">
+            <span>Triage progress</span>
+            <span id="progressLabel">0 / 0 triaged</span>
+          </div>
+          <div style="height:5px;background:var(--border);border-radius:10px;overflow:hidden;">
+            <div id="progressBar" style="height:100%;width:0%;background:var(--amber-500);border-radius:10px;transition:width 0.3s ease;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter bar — no inline handlers, IDs used instead -->
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:20px;">
+        <span style="font-size:0.78rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;">Phase:</span>
+        <button class="tab-btn phase-btn active" data-phase="all" style="flex:unset;padding:5px 12px;">All</button>
+        <div id="phaseButtons" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+        <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+          <span style="font-size:0.78rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;">Status:</span>
+          <button class="query-btn status-btn active" data-status="all">All</button>
+          <button class="query-btn status-btn" data-status="untriaged">Untriaged</button>
+          <button class="query-btn status-btn" data-status="hunt" style="color:var(--amber-400);">&#127919; Hunt</button>
+          <button class="query-btn status-btn" data-status="detect" style="color:var(--cyan-400);">&#9881; Detect</button>
+          <button class="query-btn status-btn" data-status="covered" style="color:var(--green);">&#10003; Covered</button>
+          <button class="query-btn status-btn" data-status="na" style="color:var(--text-muted);">&#215; N/A</button>
+        </div>
+      </div>
+
+      <!-- Technique grid -->
+      <div id="techniqueGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(520px,1fr));gap:16px;"></div>
+
+      <div id="noResults" style="display:none;text-align:center;padding:48px 0;color:var(--text-muted);">
+        <div style="font-size:2rem;margin-bottom:10px;">&#128269;</div>
+        <p>No techniques match the current filter.</p>
+      </div>
+
+      <div style="margin-top:28px;display:flex;justify-content:flex-end;gap:10px;">
+        <button id="btnNewImport" class="btn btn-secondary">&#8617; New Import</button>
+        <button id="btnExport" class="btn btn-primary">&#128228; Export Triage JSON</button>
+      </div>
+
+    </div><!-- /triagePanel -->
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/hunt_import.js') }}"></script>
+{% endblock %}
