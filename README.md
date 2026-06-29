@@ -29,7 +29,7 @@ analysts, by analysts with no external API calls and no data retention.
 | **Training Center** | 30+ interactive quiz questions across 6 categories with full explanations and learning paths |
 | **Report Builder** | Generate structured threat reports from professional templates |
 | **Hunt Import** | Import CTI-ATTACKCollector JSON report, to triage ATT&CK techniques and Actors TTPs, map to your telemetry of what should be hunted, dectected, or unrelated to your enviornment, Happy Hunting! |
-
+|  |
 
 https://github.com/user-attachments/assets/83ca9bf9-b8aa-4200-aa47-00de945849a9
 
